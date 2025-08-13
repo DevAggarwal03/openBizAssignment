@@ -65,6 +65,31 @@ export const validateOTPAadhar = async(otp: number, name: string) => {
 
     await page.click('input[name="ctl00$ContentPlaceHolder1$btnValidate"]');
 
+
+    try {
+        await page.waitForFunction(
+            () => {
+                const el = document.querySelector('#ctl00_ContentPlaceHolder1_lblmsg');
+                return el && el.textContent.trim().length > 0;
+            },
+            { timeout: 4000 }
+        );
+
+        const validMsg = await page.$eval('#ctl00_ContentPlaceHolder1_lblmsg', (el: Element) => el.textContent.trim());
+
+        if (validMsg.includes('You can continue Udyam Registration process.')) {
+            return {
+                success: true,
+                message: "continue with the process",
+            }
+        }
+    } catch (e) {
+        return {
+            success: false,
+            message: "Invalid Otp",
+        }
+    } 
 }
 
 //308307480209
+//241493314370
