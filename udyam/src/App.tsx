@@ -6,6 +6,7 @@ import OtpCard from './components/OtpCard';
 import PanCard from './components/PanCard';
 import Navbar from './components/NavBar';
 import ProgressTracker from './components/ProgressTracker';
+import ValidationSuccessCard from './components/validatedaCard';
 
 export interface panDetailsInterface {
   orgType: string,
@@ -18,6 +19,7 @@ export interface panDetailsInterface {
 function App() {
     const TOTAL_STEPS = 3;
 
+    const [isValidated, setIsValidated] = useState<boolean>(false);
     const [step, setStep] = useState(1); 
     const [aadNo, setAadNo] = useState('');
     const [name, setName] = useState('');
@@ -34,6 +36,10 @@ function App() {
         panDob: '',
         consent: false,
     });
+
+    const temp = "HDVPR0187d"
+    const regex = /[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}/
+    console.log(regex.test(temp))
 
     const AadharApi = async (aadhar: string, fullName: string) => {
       try {
@@ -63,11 +69,6 @@ function App() {
 
     const PanApi = async (panDetails: panDetailsInterface) => {
       try {
-        console.log(panDetails.orgType)
-        console.log(panDetails.panNumber)
-        console.log(panDetails.panHolderName)
-        console.log(panDetails.panDob)
-        console.log(name)
         const response = await axios.post('http://localhost:8080/scrpepan', {
           orgType: panDetails.orgType,
           pan: panDetails.panNumber,
@@ -127,10 +128,15 @@ function App() {
     const handlePanSubmit = async () => {
       setError('');
       setLoading(true);
+      if(panDetails.consent == false){
+        toast.error('tick is required!')
+        return;
+      }
       const response = await PanApi(panDetails);
 
       if(response.success){
         toast.success('pan validated');
+        setIsValidated(true);
       }else{
         toast.error('invalid credentials')
       }
@@ -151,17 +157,39 @@ function App() {
         }
     }
 
+    const goToStpe1 = () => {
+      setIsValidated(false);
+      setName('');
+      setAadNo('');
+      setOtp('');
+      setPanDetails({
+        orgType: '',
+        panNumber: '',
+        panHolderName: '',
+        panDob: '',
+        consent: false,
+      })
+      setStep(1);
+    }
+
     return (
         <div className="min-h-screen bg-gray-100 font-sans">
             <Navbar />
-            <div className="bg-white shadow-sm">
-                 <ProgressTracker currentStep={step} totalSteps={TOTAL_STEPS} />
-            </div>
-            <main className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{minHeight: 'calc(100vh - 64px)'}}>
-                <div className="max-w-md w-full space-y-8">
-                  {renderStep()}
-                </div>
-            </main>
+            {
+              isValidated ? (<div className='w-full h-[93vh] flex justify-center items-center'><ValidationSuccessCard onContinue={goToStpe1}/></div>) : (
+                <>
+                  <div className="bg-white shadow-sm">
+                      <ProgressTracker currentStep={step} totalSteps={TOTAL_STEPS} />
+                  </div>
+                  <main className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{minHeight: 'calc(100vh - 64px)'}}>
+                      <div className="max-w-md w-full space-y-8">
+                        {renderStep()}
+                      </div>
+                  </main>
+                </>
+              )
+            }
+            
         </div>
     );
 }

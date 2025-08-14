@@ -16,6 +16,15 @@ app.post('/scrpepan', async (req, res) => {
     const {aadharNo, orgType, pan, name, dob, userName} = req.body;
     console.log(orgType,pan,name,dob,userName);
 
+    const regex = /[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}/
+    if(!regex.test(pan)){
+        res.setHeader('Content-Type', 'application/json')
+        res.status(202).json({
+            message: "Invalid PAN",
+            success: false
+        })
+    }
+
     try {
         const response = await addPanDetails(orgType, pan, name, dob, userName);
         res.setHeader('Content-Type', 'application/json')
