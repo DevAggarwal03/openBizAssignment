@@ -19,17 +19,17 @@ const PanCard = ({ panDetails, setPanDetails, onSubmit, loading, error }: panCar
     };
 
     const orgTypes = [
-        { value: "proprietary", label: "Proprietary / एकल स्वामित्व" },
-        { value: "huf", label: "Hindu Undivided Family / हिंदू अविभाजित परिवार (एचयूएफ)" },
-        { value: "partnership", label: "Partnership / पार्टनरशिप" },
-        { value: "cooperative", label: "Co-Operative / सहकारी" },
-        { value: "private_ltd", label: "Private Limited Company / प्राइवेट लिमिटेड कंपनी" },
-        { value: "public_ltd", label: "Public Limited Company / पब्लिक लिमिटेड कंपनी" },
-        { value: "shg", label: "Self Help Group / स्वयं सहायता समूह" },
-        { value: "llp", label: "Limited Liability Partnership / सीमित दायित्व भागीदारी" },
-        { value: "society", label: "Society / सोसाइटी" },
-        { value: "trust", label: "Trust / ट्रस्ट" },
-        { value: "others", label: "Others / अन्य" },
+        { value: "1", label: "Proprietary / एकल स्वामित्व" },
+        { value: "2", label: "Hindu Undivided Family / हिंदू अविभाजित परिवार (एचयूएफ)" },
+        { value: "3", label: "Partnership / पार्टनरशिप" },
+        { value: "4", label: "Co-Operative / सहकारी" },
+        { value: "5", label: "Private Limited Company / प्राइवेट लिमिटेड कंपनी" },
+        { value: "6", label: "Public Limited Company / पब्लिक लिमिटेड कंपनी" },
+        { value: "7", label: "Self Help Group / स्वयं सहायता समूह" },
+        { value: "9", label: "Limited Liability Partnership / सीमित दायित्व भागीदारी" },
+        { value: "10", label: "Society / सोसाइटी" },
+        { value: "11", label: "Trust / ट्रस्ट" },
+        { value: "8", label: "Others / अन्य" },
     ];
 
     return (

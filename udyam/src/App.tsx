@@ -53,32 +53,28 @@ function App() {
       
     };
 
-    // Mock function to simulate sending OTP
     const OtpApi = async (otpValue: string) => {
-       try {
-        const response = await axios.post('http://localhost:8080/aadharOtp', {
-          "otp": parseInt(otpValue),
-          "name": name
-        })
-        return response.data
-       } catch (error) {
-        toast.error('Server Error')
-        setError((error as Error).message || 'An unknown error occurred.');
-        return {
-          success: false,
-          message: error
-        }
-       } 
+      const response = await axios.post('http://localhost:8080/aadharOtp', {
+        "otp": parseInt(otpValue),
+        "name": name
+      });
+      return response.data;
     };
 
     const PanApi = async (panDetails: panDetailsInterface) => {
       try {
-        const response = await axios.post('https://localhost:8080/scrpe-pan', {
+        console.log(panDetails.orgType)
+        console.log(panDetails.panNumber)
+        console.log(panDetails.panHolderName)
+        console.log(panDetails.panDob)
+        console.log(name)
+        const response = await axios.post('http://localhost:8080/scrpepan', {
           orgType: panDetails.orgType,
           pan: panDetails.panNumber,
           name: panDetails.panHolderName,
           dob: panDetails.panDob,
-          userName: name
+          userName: name,
+          aadharNo: aadNo
         }) 
 
         return response.data;
@@ -99,7 +95,7 @@ function App() {
         const response = await AadharApi(aadNo, name);
 
         if (response.success) {
-          setStep(2); // Move to OTP step
+          setStep(2); 
         }else{
           toast.error('Invalid Details')
         }
@@ -107,18 +103,26 @@ function App() {
     };
 
     const handleOtpSubmit = async () => {
-        setError('');
-        setLoading(true);
-        const response = await OtpApi(otp);
+      setError('');
+      setLoading(true);
+      try {
+        const responseData = await OtpApi(otp); // e.g. { success: true }
 
-        if(response.success){
-          toast.success('Aadhar Validated')
+        if (responseData.success || JSON.stringify(responseData).includes('true')) {
+          console.log('success');
+          toast.success('Aadhar Validated');
           setStep(3);
-        }else{
-          toast.error('Invalid Otp')
+        } else {
+          console.log('fail');
+          toast.error(responseData.message || 'Invalid Otp');
         }
+      } catch (error) {
+        toast.error('Server Error');
+        setError((error as Error).message || 'An unknown error occurred.');
+      } finally {
         setLoading(false);
-    };
+      }
+  };
 
     const handlePanSubmit = async () => {
       setError('');
